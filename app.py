@@ -18,6 +18,7 @@ class User(db.Model):
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(50), nullable=False)
     events = db.relationship('Event', backref='creator', lazy=True)
+    preferred_category = db.Column(db.String(50), nullable=True)  # 好み
 
 class Event(db.Model):
     id = db.Column(db.Integer, primary_key=True)
