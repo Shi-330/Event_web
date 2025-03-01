@@ -1,0 +1,40 @@
+<!-- templates/create_event.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="card">
+        <h2>创建新活动</h2>
+        <form method="POST">
+            <div>
+                <label for="title">活动标题:</label>
+                <input type="text" name="title" id="title" required>
+            </div>
+            <div>
+                <label for="description">活动描述:</label>
+                <textarea name="description" id="description" rows="5" required></textarea>
+            </div>
+            <div>
+                <label for="location">活动地点:</label>
+                <input type="text" name="location" id="location" required>
+            </div>
+            <div>
+                <label for="date">活动时间:</label>
+                <input type="datetime-local" name="date" id="date" required>
+            </div>
+            <div>
+                <label for="category">活动类别:</label>
+                <select name="category" id="category" required>
+                    <option value="社交聚会">社交聚会</option>
+                    <option value="技术讲座">技术讲座</option>
+                    <option value="文化活动">文化活动</option>
+                    <option value="体育赛事">体育赛事</option>
+                    <option value="音乐演出">音乐演出</option>
+                    <option value="户外探险">户外探险</option>
+                    <option value="学术研讨">学术研讨</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <button type="submit" class="btn">创建活动</button>
+        </form>
+    </div>
+{% endblock %}

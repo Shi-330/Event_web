@@ -1,0 +1,139 @@
+<!-- templates/layout.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活动平台</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            line-height: 1.6;
+        }
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        header {
+            background: #35424a;
+            color: white;
+            padding: 20px 0;
+            border-bottom: #e8491d 3px solid;
+        }
+        header a {
+            color: white;
+            text-decoration: none;
+            text-transform: uppercase;
+            margin-right: 15px;
+        }
+        .logo {
+            float: left;
+            font-size: 20px;
+        }
+        nav {
+            float: right;
+            margin-top: 5px;
+        }
+        .highlight {
+            color: #e8491d;
+        }
+        .flash-messages {
+            padding: 10px;
+            margin: 10px 0;
+            background: #f9f9f9;
+            border-left: 5px solid #e8491d;
+        }
+        .card {
+            background: white;
+            padding: 15px;
+            margin: 15px 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            background: #e8491d;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .btn:hover {
+            background: #333;
+        }
+        form input, form textarea, form select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        footer {
+            background: #35424a;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-gap: 20px;
+        }
+        .event-card {
+            background: white;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .comment {
+            background: #f9f9f9;
+            padding: 10px;
+            margin: 10px 0;
+            border-left: 3px solid #e8491d;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1><span class="highlight">活动</span>平台</h1>
+            </div>
+            <nav>
+                <a href="{{ url_for('index') }}">首页</a>
+                <a href="{{ url_for('search') }}">搜索</a>
+                {% if 'username' in session %}
+                    <a href="{{ url_for('create_event') }}">创建活动</a>
+                    <a href="{{ url_for('logout') }}">登出 ({{ session['username'] }})</a>
+                {% else %}
+                    <a href="{{ url_for('login') }}">登录</a>
+                    <a href="{{ url_for('register') }}">注册</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+    
+    <div class="container">
+        <!-- 显示消息 -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <p>{{ message }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <!-- 主要内容 -->
+        {% block content %}{% endblock %}
+    </div>
+    
+    <footer>
+        <p>活动平台 &copy; 2025</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!-- templates/event_detail.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="card">
+        <h2>{{ event.title }}</h2>
+        <p><strong>组织者:</strong> {{ event.creator.username }}</p>
+        <p><strong>类别:</strong> {{ event.category }}</p>
+        <p><strong>时间:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p><strong>地点:</strong> {{ event.location }}</p>
+        <p><strong>已报名人数:</strong> {{ participant_count }}人</p>
+        <p><strong>活动描述:</strong></p>
+        <p>{{ event.description }}</p>
+        
+        {% if 'user_id' in session %}
+            {% if session['user_id'] != event.user_id %}
+                {% if is_participant %}
+                    <a href="{{ url_for('leave_event', event_id=event.id) }}" class="btn" style="background:#e74c3c;">退出活动</a>
+                {% else %}
+                    <a href="{{ url_for('join_event', event_id=event.id) }}" class="btn">参加活动</a>
+                {% endif %}
+            {% endif %}
+        {% else %}
+            <p><a href="{{ url_for('login') }}">登录</a>后可参加活动</p>
+        {% endif %}
+    </div>
+    
+    <!-- 评论区 -->
+    <div class="card">
+        <h3>活动评论</h3>
+        
+        {% if 'user_id' in session %}
+            <form method="POST" action="{{ url_for('add_comment', event_id=event.id) }}">
+                <div>
+                    <label for="content">发表评论:</label>
+                    <textarea name="content" id="content" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn">发表</button>
+            </form>
+        {% else %}
+            <p><a href="{{ url_for('login') }}">登录</a>后可发表评论</p>
+        {% endif %}
+        
+        <div style="margin-top: 20px;">
+            {% for comment in comments %}
+                <div class="comment">
+                    <p><strong>{{ comment.user.username }}</strong> 在 {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }} 说:</p>
+                    <p>{{ comment.content }}</p>
+                </div>
+            {% else %}
+                <p>暂无评论</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

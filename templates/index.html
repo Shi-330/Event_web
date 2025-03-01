@@ -1,0 +1,26 @@
+<!-- templates/index.html -->
+{% extends "layout.html" %}
+
+{% block content %}
+    <div class="card">
+        <h1>欢迎来到活动平台</h1>
+        <p>在这里发现有趣的活动，认识志同道合的朋友，组织自己的活动</p>
+        <a href="{{ url_for('create_event') }}" class="btn">创建活动</a>
+        <a href="{{ url_for('search') }}" class="btn" style="background:#35424a;">搜索活动</a>
+    </div>
+    
+    <h2>最新活动</h2>
+    <div class="event-grid">
+        {% for event in events %}
+            <div class="event-card">
+                <h3>{{ event.title }}</h3>
+                <p><strong>类别:</strong> {{ event.category }}</p>
+                <p><strong>时间:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>地点:</strong> {{ event.location }}</p>
+                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn">查看详情</a>
+            </div>
+        {% else %}
+            <p>暂无活动</p>
+        {% endfor %}
+    </div>
+{% endblock %}
