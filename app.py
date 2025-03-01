@@ -7,7 +7,12 @@ from werkzeug.utils import secure_filename # 追加
 # アプリケーションの作成
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'simple_secret_key'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
+database_url = os.environ.get('DATABASE_URL', 'sqlite:///events.db')
+if database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # 画像の保存先ディレクトリを設定
