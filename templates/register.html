@@ -3,18 +3,18 @@
 
 {% block content %}
     <div class="card">
-        <h2>用户注册</h2>
+        <h2>ユーザー登録</h2>
         <form method="POST">
             <div>
-                <label for="username">用户名:</label>
+                <label for="username">ユーザー名:</label>
                 <input type="text" name="username" id="username" required>
             </div>
             <div>
-                <label for="password">密码:</label>
+                <label for="password">パスワード:</label>
                 <input type="password" name="password" id="password" required>
             </div>
-            <button type="submit" class="btn">注册</button>
+            <button type="submit" class="btn">登録する</button>
         </form>
-        <p>已有账号? <a href="{{ url_for('login') }}">立即登录</a></p>
+        <p>すでにアカウントがありますか？ <a href="{{ url_for('login') }}">今すぐログイン</a></p>
     </div>
 {% endblock %}

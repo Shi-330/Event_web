@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>活动平台</title>
+    <title>イベントプラットフォーム</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -100,17 +100,17 @@
     <header>
         <div class="container">
             <div class="logo">
-                <h1><span class="highlight">活动</span>平台</h1>
+                <h1><span class="highlight">イベント</span>プラットフォーム</h1>
             </div>
             <nav>
-                <a href="{{ url_for('index') }}">首页</a>
-                <a href="{{ url_for('search') }}">搜索</a>
+                <a href="{{ url_for('index') }}">ホーム</a>
+                <a href="{{ url_for('search') }}">検索</a>
                 {% if 'username' in session %}
-                    <a href="{{ url_for('create_event') }}">创建活动</a>
-                    <a href="{{ url_for('logout') }}">登出 ({{ session['username'] }})</a>
+                    <a href="{{ url_for('create_event') }}">イベントを作成</a>
+                    <a href="{{ url_for('logout') }}">ログアウト ({{ session['username'] }})</a>
                 {% else %}
-                    <a href="{{ url_for('login') }}">登录</a>
-                    <a href="{{ url_for('register') }}">注册</a>
+                    <a href="{{ url_for('login') }}">ログイン</a>
+                    <a href="{{ url_for('register') }}">登録</a>
                 {% endif %}
             </nav>
         </div>
@@ -133,7 +133,7 @@
     </div>
     
     <footer>
-        <p>活动平台 &copy; 2025</p>
+        <p>イベントプラットフォーム &copy; 2025</p>
     </footer>
 </body>
 </html>

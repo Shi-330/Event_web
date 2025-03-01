@@ -4,12 +4,12 @@
 {% block content %}
     <div class="card">
         <h2>{{ event.title }}</h2>
-        <p><strong>组织者:</strong> {{ event.creator.username }}</p>
-        <p><strong>类别:</strong> {{ event.category }}</p>
-        <p><strong>时间:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
-        <p><strong>地点:</strong> {{ event.location }}</p>
-        <p><strong>已报名人数:</strong> {{ participant_count }}人</p>
-        <p><strong>活动描述:</strong></p>
+        <p><strong>主催者:</strong> {{ event.creator.username }}</p>
+        <p><strong>カテゴリ:</strong> {{ event.category }}</p>
+        <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
+        <p><strong>場所:</strong> {{ event.location }}</p>
+        <p><strong>参加者数:</strong> {{ participant_count }}人</p>
+        <p><strong>イベントの説明:</strong></p>
         <p>{{ event.description }}</p>
         
         {% if 'user_id' in session %}
@@ -27,28 +27,28 @@
     
     <!-- 评论区 -->
     <div class="card">
-        <h3>活动评论</h3>
+        <h3>イベントコメント</h3>
         
         {% if 'user_id' in session %}
             <form method="POST" action="{{ url_for('add_comment', event_id=event.id) }}">
                 <div>
-                    <label for="content">发表评论:</label>
+                    <label for="content">コメントを投稿:</label>
                     <textarea name="content" id="content" rows="3" required></textarea>
                 </div>
-                <button type="submit" class="btn">发表</button>
+                <button type="submit" class="btn">投稿する</button>
             </form>
         {% else %}
-            <p><a href="{{ url_for('login') }}">登录</a>后可发表评论</p>
+            <p><a href="{{ url_for('login') }}">ログイン</a>してコメントできます</p>
         {% endif %}
         
         <div style="margin-top: 20px;">
             {% for comment in comments %}
                 <div class="comment">
-                    <p><strong>{{ comment.user.username }}</strong> 在 {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }} 说:</p>
+                    <p><strong>{{ comment.user.username }}</strong> が {{ comment.created_at.strftime('%Y-%m-%d %H:%M') }} に言いました:</p>
                     <p>{{ comment.content }}</p>
                 </div>
             {% else %}
-                <p>暂无评论</p>
+                <p>コメントはまだありません</p>
             {% endfor %}
         </div>
     </div>

@@ -1,19 +1,18 @@
-# app.py - 所有代码合并在一个文件中
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 
-# 创建应用
+# アプリケーションの作成
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'simple_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# 初始化数据库
+# データベースの初期化
 db = SQLAlchemy(app)
 
-# 定义模型
+# モデルの定義
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
@@ -45,7 +44,7 @@ class Participant(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user = db.relationship('User', backref='participations')
 
-# 路由：首页
+# ルート：ホーム
 @app.route('/')
 def index():
     events = Event.query.order_by(Event.date).all()

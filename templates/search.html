@@ -3,27 +3,27 @@
 
 {% block content %}
     <div class="card">
-        <h2>搜索活动</h2>
+        <h2>イベントを検索</h2>
         <form method="GET" action="{{ url_for('search') }}">
             <div>
-                <input type="text" name="query" placeholder="输入关键词搜索..." value="{{ query }}">
-                <button type="submit" class="btn">搜索</button>
+                <input type="text" name="query" placeholder="キーワードを入力して検索..." value="{{ query }}">
+                <button type="submit" class="btn">検索</button>
             </div>
         </form>
     </div>
     
-    <h3>搜索结果</h3>
+    <h3>検索結果</h3>
     <div class="event-grid">
         {% for event in events %}
             <div class="event-card">
                 <h3>{{ event.title }}</h3>
-                <p><strong>类别:</strong> {{ event.category }}</p>
-                <p><strong>时间:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
-                <p><strong>地点:</strong> {{ event.location }}</p>
-                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn">查看详情</a>
+                <p><strong>カテゴリ:</strong> {{ event.category }}</p>
+                <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
+                <p><strong>場所:</strong> {{ event.location }}</p>         
+                <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn">詳細を見る</a>
             </div>
         {% else %}
-            <p>未找到匹配的活动</p>
+            <p>一致するイベントはありません。</p>
         {% endfor %}
     </div>
 {% endblock %}
