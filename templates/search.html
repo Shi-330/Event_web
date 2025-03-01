@@ -9,9 +9,32 @@
                 <input type="text" name="query" placeholder="キーワードを入力して検索..." value="{{ query }}">
                 <button type="submit" class="btn">検索</button>
             </div>
+
+            <div>
+                <!-- 日時による絞り込み -->
+                <label for="date_sort">日時:</label>
+                <select name="date_sort" id="date_sort">
+                    <option value="">指定なし</option>
+                    <option value="asc" {% if date_sort == 'asc' %}selected{% endif %}>近い順</option>
+                    <option value="desc" {% if date_sort == 'desc' %}selected{% endif %}>遠い順</option>
+                </select>
+
+                <!-- 場所による絞り込み (例: テキスト入力) -->
+                <label for="location_filter">場所:</label>
+                <input type="text" name="location_filter" id="location_filter" placeholder="場所を入力" value="{{ location_filter }}">
+
+                <!-- カテゴリによる絞り込み (例: プルダウン) -->
+                <label for="category_filter">カテゴリ:</label>
+                <select name="category_filter" id="category_filter">
+                    <option value="">すべて</option>
+                    {% for category in categories %}
+                    <option value="{{ category }}" {% if category_filter == category %}selected{% endif %}>{{ category }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </form>
     </div>
-    
+
     <h3>検索結果</h3>
     <div class="event-grid">
         {% for event in events %}
@@ -19,7 +42,7 @@
                 <h3>{{ event.title }}</h3>
                 <p><strong>カテゴリ:</strong> {{ event.category }}</p>
                 <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
-                <p><strong>場所:</strong> {{ event.location }}</p>         
+                <p><strong>場所:</strong> {{ event.location }}</p>
                 <a href="{{ url_for('event_detail', event_id=event.id) }}" class="btn">詳細を見る</a>
             </div>
         {% else %}

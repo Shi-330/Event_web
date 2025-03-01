@@ -1,13 +1,22 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
+from werkzeug.utils import secure_filename # 追加
 
 # アプリケーションの作成
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'simple_secret_key'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# 画像の保存先ディレクトリを設定
+UPLOAD_FOLDER = 'static/uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+# ディレクトリが存在しない場合に作成
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# 許可される拡張子を設定
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 # データベースの初期化
 db = SQLAlchemy(app)
@@ -27,6 +36,7 @@ class Event(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    image_filename = db.Column(db.String(255), nullable=True) # 画像ファイル名を追加
     comments = db.relationship('Comment', backref='event', lazy=True)
     participants = db.relationship('Participant', backref='event', lazy=True)
 
@@ -44,7 +54,11 @@ class Participant(db.Model):
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'), nullable=False)
     user = db.relationship('User', backref='participations')
 
-# ルート：ホーム
+# 画像の拡張子が正しいかをチェックする関数
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# 路由：ホーム
 @app.route('/')
 def index():
     events = Event.query.order_by(Event.date).all()
@@ -66,7 +80,7 @@ def register():
         db.session.add(new_user)
         db.session.commit()
         
-        flash('注册成功，请登录！')
+        flash('登録完了、ログインしてください！')
         return redirect(url_for('login'))
     
     return render_template('register.html')
@@ -83,10 +97,10 @@ def login():
         if user and user.password == password:
             session['user_id'] = user.id
             session['username'] = user.username
-            flash('登录成功！')
+            flash('ログインに成功しました！')
             return redirect(url_for('index'))
         else:
-            flash('用户名或密码错误！')
+            flash('ユーザー名またはパスワードが正しくありません！')
     
     return render_template('login.html')
 
@@ -95,41 +109,60 @@ def login():
 def logout():
     session.pop('user_id', None)
     session.pop('username', None)
-    flash('您已退出登录！')
+    flash('ログアウトしました！')
     return redirect(url_for('index'))
 
-# 路由：创建活动
+# 路由：画像の表示
+@app.route('/uploads/<filename>')
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+# 路由：作成活动
 @app.route('/create_event', methods=['GET', 'POST'])
 def create_event():
     if 'user_id' not in session:
-        flash('请先登录！')
+        flash('ログインしてください！')
         return redirect(url_for('login'))
-    
+
     if request.method == 'POST':
         title = request.form['title']
         description = request.form['description']
         location = request.form['location']
         date_str = request.form['date']
         category = request.form['category']
-        
-        # 简单的日期格式转换
         date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
-        
+
+        # 画像ファイルの処理
+        image_filename = None
+        if 'image' in request.files:
+            image = request.files['image']
+            if image.filename != '' and allowed_file(image.filename):
+                filename = secure_filename(image.filename)
+                image_filename = filename  # 画像ファイル名を保存
+                image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            elif image.filename == '':
+                flash('画像が選択されていません。')
+                return render_template('create_event.html')
+            else:
+                flash('許可されていない拡張子の画像ファイルです。')
+                return render_template('create_event.html')
+
         new_event = Event(
             title=title,
             description=description,
             location=location,
             date=date,
             category=category,
-            user_id=session['user_id']
+            user_id=session['user_id'],  # ユーザーIDをセット
+            image_filename=image_filename
         )
-        
+
         db.session.add(new_event)
         db.session.commit()
-        
-        flash('活动创建成功！')
+
+        flash('イベントの作成に成功しました！')
         return redirect(url_for('index'))
-    
+
     return render_template('create_event.html')
 
 # 路由：活动详情
@@ -157,7 +190,7 @@ def event_detail(event_id):
 @app.route('/add_comment/<int:event_id>', methods=['POST'])
 def add_comment(event_id):
     if 'user_id' not in session:
-        flash('请先登录！')
+        flash('ログインしてください！')
         return redirect(url_for('login'))
     
     content = request.form['content']
@@ -171,20 +204,20 @@ def add_comment(event_id):
     db.session.add(new_comment)
     db.session.commit()
     
-    flash('评论发布成功！')
+    flash('コメントを投稿しました！')
     return redirect(url_for('event_detail', event_id=event_id))
 
 # 路由：参加活动
 @app.route('/join_event/<int:event_id>')
 def join_event(event_id):
     if 'user_id' not in session:
-        flash('请先登录！')
+        flash('ログインしてください！')
         return redirect(url_for('login'))
     
     # 检查是否已经参加
     existing = Participant.query.filter_by(event_id=event_id, user_id=session['user_id']).first()
     if existing:
-        flash('您已经参加了这个活动！')
+        flash('すでに参加しています！')
         return redirect(url_for('event_detail', event_id=event_id))
     
     new_participant = Participant(
@@ -195,7 +228,7 @@ def join_event(event_id):
     db.session.add(new_participant)
     db.session.commit()
     
-    flash('成功参加活动！')
+    flash('参加しました！')
     return redirect(url_for('event_detail', event_id=event_id))
 
 # 路由：退出活动
@@ -209,7 +242,7 @@ def leave_event(event_id):
     if participant:
         db.session.delete(participant)
         db.session.commit()
-        flash('您已退出该活动！')
+        flash('退出しました！')
     
     return redirect(url_for('event_detail', event_id=event_id))
 
@@ -217,21 +250,52 @@ def leave_event(event_id):
 @app.route('/search')
 def search():
     query = request.args.get('query', '')
+    date_sort = request.args.get('date_sort', '')
+    location_filter = request.args.get('location_filter', '')
+    category_filter = request.args.get('category_filter', '')
+
+    # 全てのカテゴリーを取得
+    categories = [category[0] for category in db.session.query(Event.category).distinct().all()]
     
+    # ベースとなるクエリを準備
+    base_query = Event.query
+    
+    # 検索キーワードによるフィルタリング
     if query:
-        events = Event.query.filter(
+        base_query = base_query.filter(
             (Event.title.contains(query)) | 
             (Event.description.contains(query)) |
             (Event.location.contains(query)) |
             (Event.category.contains(query))
-        ).all()
-    else:
-        events = Event.query.all()
-    
-    return render_template('search.html', events=events, query=query)
+        )
 
-# 初始化数据库
+    # 場所によるフィルタリング
+    if location_filter:
+        base_query = base_query.filter(Event.location.contains(location_filter))
+
+    # カテゴリによるフィルタリング
+    if category_filter:
+        base_query = base_query.filter(Event.category == category_filter)
+
+    # 日時によるソート
+    if date_sort == 'asc':
+        base_query = base_query.order_by(Event.date.asc())
+    elif date_sort == 'desc':
+        base_query = base_query.order_by(Event.date.desc())
+
+    # 最終的なクエリを実行
+    events = base_query.all()
+
+    return render_template(
+        'search.html',
+        events=events,
+        query=query,
+        date_sort=date_sort,
+        location_filter=location_filter,
+        category_filter=category_filter,
+        categories = categories
+    )
+
+# 実行処理
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True)

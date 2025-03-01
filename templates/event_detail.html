@@ -2,30 +2,37 @@
 {% extends "layout.html" %}
 
 {% block content %}
-    <div class="card">
-        <h2>{{ event.title }}</h2>
-        <p><strong>主催者:</strong> {{ event.creator.username }}</p>
-        <p><strong>カテゴリ:</strong> {{ event.category }}</p>
-        <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
-        <p><strong>場所:</strong> {{ event.location }}</p>
-        <p><strong>参加者数:</strong> {{ participant_count }}人</p>
-        <p><strong>イベントの説明:</strong></p>
-        <p>{{ event.description }}</p>
-        
-        {% if 'user_id' in session %}
-            {% if session['user_id'] != event.user_id %}
-                {% if is_participant %}
-                    <a href="{{ url_for('leave_event', event_id=event.id) }}" class="btn" style="background:#e74c3c;">退出活动</a>
+    <div class="event-detail-card">
+        <div class="event-text">
+            <h2>{{ event.title }}</h2>
+            <p><strong>主催者:</strong> {{ event.creator.username }}</p>
+            <p><strong>カテゴリ:</strong> {{ event.category }}</p>
+            <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>場所:</strong> {{ event.location }}</p>
+            <p><strong>参加者数:</strong> {{ participant_count }}人</p>
+            <p><strong>イベントの説明:</strong></p>
+            <p>{{ event.description }}</p>
+
+            {% if 'user_id' in session %}
+                {% if session['user_id'] != event.user_id %}
+                    {% if is_participant %}
+                        <a href="{{ url_for('leave_event', event_id=event.id) }}" class="btn" style="background:#e74c3c;">退出する</a>
+                    {% else %}
+                        <a href="{{ url_for('join_event', event_id=event.id) }}" class="btn">参加する</a>
+                    {% endif %}
                 {% else %}
-                    <a href="{{ url_for('join_event', event_id=event.id) }}" class="btn">参加活动</a>
+                    <p>あなたはこのイベントの主催者です。</p>
                 {% endif %}
+            {% else %}
+                <p><a href="{{ url_for('login') }}">ログイン</a>して参加できます</p>
             {% endif %}
-        {% else %}
-            <p><a href="{{ url_for('login') }}">登录</a>后可参加活动</p>
+        </div>
+        {% if event.image_filename %}
+        <img src="{{ url_for('uploaded_file', filename=event.image_filename) }}" alt="{{ event.title }}" class="event-image">
         {% endif %}
     </div>
     
-    <!-- 评论区 -->
+    <!-- コメント区 -->
     <div class="card">
         <h3>イベントコメント</h3>
         

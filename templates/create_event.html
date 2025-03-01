@@ -3,38 +3,46 @@
 
 {% block content %}
     <div class="card">
-        <h2>新しいイベントを作成</h2>
-        <form method="POST">
+        <h2>イベントを作成</h2>
+        <form method="POST" action="{{ url_for('create_event') }}" enctype="multipart/form-data">
             <div>
-                <label for="title">イベントタイトル:</label>
+                <label for="title">タイトル:</label>
                 <input type="text" name="title" id="title" required>
             </div>
             <div>
-                <label for="description">イベントの説明:</label>
-                <textarea name="description" id="description" rows="5" required></textarea>
+                <label for="description">説明:</label>
+                <textarea name="description" id="description" required></textarea>
             </div>
             <div>
-                <label for="location">開催場所:</label>
+                <label for="location">場所:</label>
                 <input type="text" name="location" id="location" required>
             </div>
             <div>
-                <label for="date">開催日時:</label>
+                <label for="date">日時:</label>
                 <input type="datetime-local" name="date" id="date" required>
             </div>
             <div>
-                <label for="category">イベントのカテゴリ:</label>
-                <select name="category" id="category" required>
-                    <option value="社交聚会">交流会</option>
-                    <option value="技术讲座">技術セミナー</option>
-                    <option value="文化活动">文化イベント</option>
-                    <option value="体育赛事">スポーツ大会</option>
-                    <option value="音乐演出">音楽ライブ</option>
-                    <option value="户外探险">アウトドアアドベンチャー</option>
-                    <option value="学术研讨">学術シンポジウム</option>
-                    <option value="其他">その他</option>
-                </select>
+                <label for="category">カテゴリー:</label>
+                <input type="text" name="category" id="category" required>
             </div>
-            <button type="submit" class="btn">イベントを作成</button>
+            <div>
+                <label for="image">画像:</label>
+                <input type="file" name="image" id="image" accept="image/*">
+                <p id="image_file_name"></p>
+            </div>
+            <button type="submit" class="btn">作成</button>
         </form>
     </div>
+    <script>
+        const imageInput = document.getElementById('image');
+        const fileNameDisplay = document.getElementById('image_file_name');
+
+        imageInput.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = "ファイル名: " + this.files[0].name;
+            } else {
+                fileNameDisplay.textContent = "";
+            }
+        });
+    </script>
 {% endblock %}

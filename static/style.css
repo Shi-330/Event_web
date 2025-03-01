@@ -1,0 +1,63 @@
+/* 全体的なスタイル */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4;
+}
+
+.card {
+    background-color: #fff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    background-color: #5cb85c; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+/* 画像のスタイル */
+.event-image {
+    width: 250px; /* 画像の幅を指定 */
+    height: auto;
+    border-radius: 10px; /* 画像の角を丸くする */
+    float: right;
+    margin-left: 20px;
+}
+
+/* イベント詳細ページ用のスタイル */
+.event-detail-container {
+    display: flex;
+    align-items: flex-start; /* 上揃えにする */
+}
+
+.event-text {
+    flex-grow: 1;
+    margin-right: 20px;
+}
+
+.event-detail-card {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+/* コメント欄 */
+.comment{
+    border-bottom:1px solid;
+}
