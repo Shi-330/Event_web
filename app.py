@@ -3,11 +3,15 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import os
 from werkzeug.utils import secure_filename # 追加
+from dotenv import load_dotenv
+
+load_dotenv()  # .env ファイルから環境変数をロード
 
 # アプリケーションの作成
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'simple_secret_key'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///events.db'
+
+# 環境変数からデータベースの接続情報を取得する
 database_url = os.environ.get('DATABASE_URL', 'sqlite:///events.db')
 if database_url.startswith('postgres://'):
     database_url = database_url.replace('postgres://', 'postgresql://', 1)
@@ -38,6 +42,7 @@ class Event(db.Model):
     title = db.Column(db.String(100), nullable=False)
     description = db.Column(db.Text, nullable=False)
     location = db.Column(db.String(100), nullable=False)
+    address = db.Column(db.String(200), nullable=False)  # 追加
     date = db.Column(db.DateTime, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -133,6 +138,7 @@ def create_event():
         title = request.form['title']
         description = request.form['description']
         location = request.form['location']
+        address = request.form['address'] # 追加
         date_str = request.form['date']
         category = request.form['category']
         date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
@@ -156,6 +162,7 @@ def create_event():
             title=title,
             description=description,
             location=location,
+            address=address,  # 追加
             date=date,
             category=category,
             user_id=session['user_id'],  # ユーザーIDをセット

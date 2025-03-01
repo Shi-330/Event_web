@@ -13,20 +13,20 @@ def create_sample_data():
 
         # サンプルイベントを複数作成
         sample_events = [
-            Event(title="テクノロジーセミナー", description="最新テクノロジーについて学びます", location="東京", date=datetime(2024, 11, 15, 10, 00), category="テクノロジー", user_id=user.id, image_filename="1.jpg"),
-            Event(title="ヨガクラス", description="初心者向けのヨガクラス", location="大阪", date=datetime(2024, 10, 28, 13, 00), category="ヘルス", user_id=user.id, image_filename="2.jpg"),
-            Event(title="プログラミングワークショップ", description="Pythonを使ったプログラミング", location="東京", date=datetime(2024, 12, 5, 15, 00), category="テクノロジー", user_id=user.id, image_filename="3.jpg"),
-            Event(title="写真展", description="プロの写真家による写真展", location="福岡", date=datetime(2024, 9, 20, 11, 00), category="アート", user_id=user.id, image_filename="4.jpg"),
-            Event(title="料理教室", description="本格的なイタリア料理教室", location="名古屋", date=datetime(2024, 10, 10, 18, 00), category="フード", user_id=user.id, image_filename="5.jpg"),
-            Event(title="音楽フェスティバル", description="様々なジャンルの音楽フェス", location="東京", date=datetime(2024, 12, 24, 12, 00), category="音楽", user_id=user.id, image_filename="6.jpg"),
-            Event(title="マラソン大会", description="初心者から参加できるマラソン大会", location="大阪", date=datetime(2024, 11, 8, 9, 00), category="スポーツ", user_id=user.id, image_filename="7.jpg"),
-            Event(title="映画鑑賞会", description="インディーズ映画の鑑賞会", location="東京", date=datetime(2024, 10, 5, 19, 00), category="エンタメ", user_id=user.id, image_filename="8.jpg"),
-            Event(title="デザインワークショップ", description="デザインの基礎を学ぶワークショップ", location="京都", date=datetime(2024, 11, 22, 14, 00), category="アート", user_id=user.id, image_filename="9.jpg"),
-            Event(title="ワインテイスティング", description="世界各国のワインテイスティング", location="東京", date=datetime(2024, 10, 18, 17, 00), category="フード", user_id=user.id, image_filename="10.jpg"),
-            Event(title="アニメーション展示", description="人気アニメーションの展示", location="東京", date=datetime(2024, 9, 15, 10, 00), category="エンタメ", user_id=user.id, image_filename="11.jpg"),
-            Event(title="バスケットボール大会", description="地域バスケットボール大会", location="大阪", date=datetime(2024, 11, 29, 13, 00), category="スポーツ", user_id=user.id, image_filename="12.jpg"),
-            Event(title="ガーデニング教室", description="ガーデニング初心者向け", location="東京", date=datetime(2024, 12, 15, 14, 00), category="ヘルス", user_id=user.id, image_filename="13.jpg"),
-            Event(title="サイエンスカンファレンス", description="最新の科学技術", location="福岡", date=datetime(2024, 10, 2, 10, 00), category="テクノロジー", user_id=user.id, image_filename="14.jpg"),
+            Event(title="テクノロジーセミナー", description="最新テクノロジーについて学びます", location="東京", address="東京都千代田区1-1", date=datetime(2024, 11, 15, 10, 00), category="テクノロジー", user_id=user.id, image_filename="1.jpg"),
+            Event(title="ヨガクラス", description="初心者向けのヨガクラス", location="大阪", address="大阪府大阪市2-2", date=datetime(2024, 10, 28, 13, 00), category="ヘルス", user_id=user.id, image_filename="2.jpg"),
+            Event(title="プログラミングワークショップ", description="Pythonを使ったプログラミング", location="東京", address="東京都新宿区3-3", date=datetime(2024, 12, 5, 15, 00), category="テクノロジー", user_id=user.id, image_filename="3.jpg"),
+            Event(title="写真展", description="プロの写真家による写真展", location="福岡", address="福岡県福岡市4-4", date=datetime(2024, 9, 20, 11, 00), category="アート", user_id=user.id, image_filename="4.jpg"),
+            Event(title="料理教室", description="本格的なイタリア料理教室", location="名古屋", address="愛知県名古屋市5-5", date=datetime(2024, 10, 10, 18, 00), category="フード", user_id=user.id, image_filename="5.jpg"),
+            Event(title="音楽フェスティバル", description="様々なジャンルの音楽フェス", location="東京", address="東京都渋谷区6-6", date=datetime(2024, 12, 24, 12, 00), category="音楽", user_id=user.id, image_filename="6.jpg"),
+            Event(title="マラソン大会", description="初心者から参加できるマラソン大会", location="大阪", address="大阪府大阪市7-7", date=datetime(2024, 11, 8, 9, 00), category="スポーツ", user_id=user.id, image_filename="7.jpg"),
+            Event(title="映画鑑賞会", description="インディーズ映画の鑑賞会", location="東京", address="東京都港区8-8", date=datetime(2024, 10, 5, 19, 00), category="エンタメ", user_id=user.id, image_filename="8.jpg"),
+            Event(title="デザインワークショップ", description="デザインの基礎を学ぶワークショップ", location="京都", address="京都府京都市9-9", date=datetime(2024, 11, 22, 14, 00), category="アート", user_id=user.id, image_filename="9.jpg"),
+            Event(title="ワインテイスティング", description="世界各国のワインテイスティング", location="東京", address="東京都新宿区10-10", date=datetime(2024, 10, 18, 17, 00), category="フード", user_id=user.id, image_filename="10.jpg"),
+            Event(title="アニメーション展示", description="人気アニメーションの展示", location="東京", address="東京都豊島区11-11", date=datetime(2024, 9, 15, 10, 00), category="エンタメ", user_id=user.id, image_filename="11.jpg"),
+            Event(title="バスケットボール大会", description="地域バスケットボール大会", location="大阪", address="大阪府大阪市12-12", date=datetime(2024, 11, 29, 13, 00), category="スポーツ", user_id=user.id, image_filename="12.jpg"),
+            Event(title="ガーデニング教室", description="ガーデニング初心者向け", location="東京", address="東京都世田谷区13-13", date=datetime(2024, 12, 15, 14, 00), category="ヘルス", user_id=user.id, image_filename="13.jpg"),
+            Event(title="サイエンスカンファレンス", description="最新の科学技術", location="福岡", address="福岡県福岡市14-14", date=datetime(2024, 10, 2, 10, 00), category="テクノロジー", user_id=user.id, image_filename="14.jpg"),
         ]
 
         for event in sample_events:

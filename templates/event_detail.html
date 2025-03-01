@@ -9,6 +9,7 @@
             <p><strong>カテゴリ:</strong> {{ event.category }}</p>
             <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
             <p><strong>場所:</strong> {{ event.location }}</p>
+            <p><strong>住所:</strong> {{ event.address }}</p>
             <p><strong>参加者数:</strong> {{ participant_count }}人</p>
             <p><strong>イベントの説明:</strong></p>
             <p>{{ event.description }}</p>
@@ -31,7 +32,9 @@
         <img src="{{ url_for('uploaded_file', filename=event.image_filename) }}" alt="{{ event.title }}" class="event-image">
         {% endif %}
     </div>
-    
+
+    <div id="map" style="height: 400px; width: 100%;"></div>
+
     <!-- コメント区 -->
     <div class="card">
         <h3>イベントコメント</h3>
@@ -59,4 +62,9 @@
             {% endfor %}
         </div>
     </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnlBfeFmP1oPo8Mil5hJqnajiLqf8wE-M&callback=initMap" async defer></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script>
+        initMap("{{ event.address }}");
+    </script>
 {% endblock %}

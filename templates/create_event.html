@@ -18,6 +18,10 @@
                 <input type="text" name="location" id="location" required>
             </div>
             <div>
+                <label for="address">住所:</label>
+                <input type="text" name="address" id="address" required>
+            </div>
+            <div>
                 <label for="date">日時:</label>
                 <input type="datetime-local" name="date" id="date" required>
             </div>
@@ -30,12 +34,20 @@
                 <input type="file" name="image" id="image" accept="image/*">
                 <p id="image_file_name"></p>
             </div>
+            <div id="map" style="height: 400px; width: 100%;"></div>
             <button type="submit" class="btn">作成</button>
         </form>
     </div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAnlBfeFmP1oPo8Mil5hJqnajiLqf8wE-M&callback=initMap" async defer></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
     <script>
+        const addressInput = document.getElementById('address');
         const imageInput = document.getElementById('image');
         const fileNameDisplay = document.getElementById('image_file_name');
+
+        addressInput.addEventListener('change', function() {
+            initMap(this.value);
+        });
 
         imageInput.addEventListener('change', function() {
             if (this.files.length > 0) {
@@ -44,5 +56,9 @@
                 fileNameDisplay.textContent = "";
             }
         });
+
+        window.onload = function() {
+            initMap(addressInput.value);
+        };
     </script>
 {% endblock %}
