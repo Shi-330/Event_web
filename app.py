@@ -301,6 +301,29 @@ def search():
         categories = categories
     )
 
+# 路由：我的页面
+@app.route('/mypage')
+def mypage():
+    if 'user_id' not in session:
+        flash('まずログインしてください！')
+        return redirect(url_for('login'))
+    
+    # 获取用户信息
+    user = User.query.get(session['user_id'])
+    
+    # 获取用户创建的活动
+    created_events = Event.query.filter_by(user_id=session['user_id']).all()
+    
+    # 获取用户参与的活动
+    participated_events = Event.query.join(Participant).filter(
+        Participant.user_id == session['user_id']
+    ).all()
+    
+    return render_template('mypage.html', 
+                          user=user, 
+                          created_events=created_events,
+                          participated_events=participated_events)
+
 # データベースの初期化 for render
 @app.route('/init-db')
 def init_db():
