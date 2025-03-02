@@ -1,0 +1,11 @@
+# Ignore Python bytecode files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ignore database files
+instance/events.db
+instance/*.db
+
+# Ignore uploaded files
+static/uploads/
