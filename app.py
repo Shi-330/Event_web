@@ -42,6 +42,8 @@ class Event(db.Model):
     category = db.Column(db.String(50), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     image_filename = db.Column(db.String(255), nullable=True) # 画像ファイル名を追加
+    # 追加カラム
+    capacity = db.Column(db.Integer, default=0)  # 定員 (0は無制限)
     comments = db.relationship('Comment', backref='event', lazy=True)
     participants = db.relationship('Participant', backref='event', lazy=True)
 
@@ -135,6 +137,7 @@ def create_event():
         location = request.form['location']
         date_str = request.form['date']
         category = request.form['category']
+        capacity = int(request.form['capacity'])  # 定員 (0は無制限)
         date = datetime.strptime(date_str, '%Y-%m-%dT%H:%M')
 
         # 画像ファイルの処理
@@ -158,6 +161,7 @@ def create_event():
             location=location,
             date=date,
             category=category,
+            capacity=capacity,
             user_id=session['user_id'],  # ユーザーIDをセット
             image_filename=image_filename
         )
@@ -173,23 +177,45 @@ def create_event():
 # 路由：活动详情
 @app.route('/event/<int:event_id>')
 def event_detail(event_id):
-    event = Event.query.get_or_404(event_id)
-    comments = Comment.query.filter_by(event_id=event_id).all()
+    try:
+        print(f"イベント ID {event_id} の詳細ページをロード中")
+
+        event = Event.query.get_or_404(event_id)
+        print(f"イベントを取得: {event.title}")
+
+        comments = Comment.query.filter_by(event_id=event_id).all()
+        print(f"コメント数: {len(comments)}")
+
+        # 参加状態の確認
+        is_participant = False
+        if 'user_id' in session:
+            participant = Participant.query.filter_by(event_id=event_id, user_id=session['user_id']).first()
+            is_participant = participant is not None
+        print(f"参加状態: {is_participant}")
+
+        participant = Participant.query.filter_by(event_id=event_id).all()
+        participant_count = len(participant)
+        print(f"参加者数: {participant_count}")
+
+        # 定員状況の確認
+        is_full = False
+        if hasattr(event, 'capacity') and event.capacity is not None:
+            is_full = participant_count >= event.capacity  # 参加者数が上限に達しているか
+        print(f"定員状況: {is_full}")
+   
     
-    # 检查当前用户是否已参与
-    is_participant = False
-    if 'user_id' in session:
-        participant = Participant.query.filter_by(event_id=event_id, user_id=session['user_id']).first()
-        is_participant = participant is not None
-    
-    participants = Participant.query.filter_by(event_id=event_id).all()
-    participant_count = len(participants)
-    
-    return render_template('event_detail.html', 
-                          event=event, 
-                          comments=comments, 
-                          is_participant=is_participant,
-                          participant_count=participant_count)
+        return render_template('event_detail.html', 
+                            event=event, 
+                            comments=comments, 
+                            is_participant=is_participant,
+                            participant_count=participant_count,
+                            is_full=is_full)
+    except Exception as e:
+        print(f"エラーが発生: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        flash('ページの表示中にエラーが発生しました。')
+        return redirect(url_for('index'))
 
 # 路由：添加评论
 @app.route('/add_comment/<int:event_id>', methods=['POST'])
@@ -218,13 +244,22 @@ def join_event(event_id):
     if 'user_id' not in session:
         flash('ログインしてください！')
         return redirect(url_for('login'))
-    
-    # 检查是否已经参加
+    #対象のイベントを取得
+    event = Event.query.get_or_404(event_id)
+
+    #check1: すでに参加しているかどうか
     existing = Participant.query.filter_by(event_id=event_id, user_id=session['user_id']).first()
     if existing:
-        flash('すでに参加しています！')
+        flash('既に参加しています！')
+        return redirect(url_for('event_detail', event_id=event_id))
+
+    #check2: 定員に達しているかどうか
+    participants_count = Participant.query.filter_by(event_id=event_id).count()
+    if event.capacity > 0 and participants_count >= event.capacity:
+        flash('申し訳ありませんが、このイベントは定員に達しました。')
         return redirect(url_for('event_detail', event_id=event_id))
     
+    # 問題なければ参加処理を続行
     new_participant = Participant(
         user_id=session['user_id'],
         event_id=event_id
@@ -233,22 +268,7 @@ def join_event(event_id):
     db.session.add(new_participant)
     db.session.commit()
     
-    flash('参加しました！')
-    return redirect(url_for('event_detail', event_id=event_id))
-
-# 路由：退出活动
-@app.route('/leave_event/<int:event_id>')
-def leave_event(event_id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-    
-    participant = Participant.query.filter_by(event_id=event_id, user_id=session['user_id']).first()
-    
-    if participant:
-        db.session.delete(participant)
-        db.session.commit()
-        flash('退出しました！')
-    
+    flash('参加登録が完了しました！')
     return redirect(url_for('event_detail', event_id=event_id))
 
 # 路由：搜索活动
@@ -330,7 +350,38 @@ def init_db():
     with app.app_context():
         db.create_all()
     return "データベーステーブルが正常に作成されました！"
-
+# app.py に追加するコード（一時的な修正）
+@app.route('/fix-db')
+def fix_db():
+    try:
+        # 古いデータベースファイルを削除するコードは含めていません
+        # 現在の DB 構造を表示
+        tables = []
+        with app.app_context():
+            result = db.session.execute("SELECT name FROM sqlite_master WHERE type='table';")
+            for row in result:
+                tables.append(row[0])
+            
+            # Event テーブル構造を確認
+            if 'event' in tables:
+                columns = []
+                result = db.session.execute("PRAGMA table_info(event);")
+                for row in result:
+                    columns.append(row[1])  # カラム名
+                
+                # max_participants カラムがなければ追加
+                if 'max_participants' not in columns:
+                    db.session.execute('ALTER TABLE event ADD COLUMN max_participants INTEGER;')
+                    db.session.commit()
+                    
+            # テーブルがなければ作成
+            else:
+                db.create_all()
+            
+        return f"データベース修正が完了しました。テーブル: {', '.join(tables)}"
+    except Exception as e:
+        return f"エラーが発生しました: {str(e)}"
+    
 # 実行処理
 if __name__ == '__main__':
     app.run(debug=True)

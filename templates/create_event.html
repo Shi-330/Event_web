@@ -26,6 +26,11 @@
                 <input type="text" name="category" id="category" required>
             </div>
             <div>
+                <label for="capacity">定員:</label>
+                <input type="number" name="capacity" id="capacity" min="0" value="0">
+                <small>※0は無制限</small>
+            </div>
+            <div>
                 <label for="image">画像:</label>
                 <input type="file" name="image" id="image" accept="image/*">
                 <p id="image_file_name"></p>
