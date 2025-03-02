@@ -36,6 +36,16 @@ body {
     margin-left: 20px;
 }
 
+/* イベントリストの画像 */
+.event-list-image {
+    width: 100%; /* 親要素の幅に合わせる */
+    height: auto; /* 縦横比を保つ */
+    max-height: 200px; /* 最大高さを設定（必要に応じて調整） */
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
 /* イベント詳細ページ用のスタイル */
 .event-detail-container {
     display: flex;

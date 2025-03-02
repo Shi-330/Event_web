@@ -40,6 +40,9 @@
         {% for event in events %}
             <div class="event-card">
                 <h3>{{ event.title }}</h3>
+                {% if event.image_filename %}
+                    <img src="{{ url_for('uploaded_file', filename=event.image_filename) }}" alt="{{ event.title }}" class="event-list-image">
+                {% endif %}
                 <p><strong>カテゴリ:</strong> {{ event.category }}</p>
                 <p><strong>日時:</strong> {{ event.date.strftime('%Y-%m-%d %H:%M') }}</p>
                 <p><strong>場所:</strong> {{ event.location }}</p>
