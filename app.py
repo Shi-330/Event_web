@@ -308,6 +308,13 @@ def search():
         categories = categories
     )
 
+# データベースの初期化 for render
+@app.route('/init-db')
+def init_db():
+    with app.app_context():
+        db.create_all()
+    return "データベーステーブルが正常に作成されました！"
+
 # 実行処理
 if __name__ == '__main__':
     app.run(debug=True)
